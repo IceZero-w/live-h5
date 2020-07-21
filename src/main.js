@@ -2,9 +2,17 @@ import Vue from 'vue'
 import 'normalize.css'
 import router from '@/router/index'
 import App from './App.vue'
-console.log(router, '---router')
-Vue.config.productionTip = false
+import util from '@/lib/util'
 
+Object.keys(util).map((key) => {
+  Vue.prototype[key] = util[key];
+})
+
+// 引入h5组件库
+import MintUI from 'mint-ui'
+import 'mint-ui/lib/style.css'
+import '@/assets/my-mintui.scss'
+Vue.use(MintUI)
 // const { hacks } = require('viewport-units-buggyfill');
 // require('viewport-units-buggyfill').init({
 //   hacks: hacks
