@@ -1,5 +1,5 @@
 <template>
-	<div>下载</div>
+	<div></div>
 </template>
 <script>
 export default {

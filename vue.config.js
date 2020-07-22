@@ -1,5 +1,4 @@
 const path = require('path')
-const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 
 module.exports = {
 	configureWebpack: {
@@ -9,12 +8,15 @@ module.exports = {
 			}
 		},
 		plugins: [
-			// 解决z-index解析异常问题
-			new OptimizeCSSPlugin({
-				cssProcessorOptions: {
-					safe: true
-				}
-			})
 		]
+	},
+	devServer: {
+    proxy: {
+			'/test/':  {
+        target: ' http://192.168.74.50:8082',
+        ws: true,
+        changeOrigin: true
+      },
+		}
   }
 }

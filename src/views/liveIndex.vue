@@ -9,7 +9,6 @@
 	</div>
 </template>
 <script>
-// import Player from 'xgplayer';
 import 'xgplayer';
 import Player from 'xgplayer-hls';
 import { Toast } from 'mint-ui';
@@ -30,7 +29,7 @@ export default {
 			if (!this.roomId) {
 				Toast({
 					message: '直播房间号获取异常',
-					duration: 150000,
+					duration: 1500,
 					className: 'my-toast',
 				});
 				return;
@@ -42,17 +41,16 @@ export default {
 			const { innerWidth, innerHeight } = window;
 			const player = new Player({
 				id: 'live-container',
-				// url: 'http://192.168.0.107:8080/test.mp4',
-				url: '../../../parseTest/test.ts',
+				url: '@/../test/index.m3u8',
+				useHls: true,
 				width: innerWidth,
 				height: innerHeight,
 				// volume: 0.6, // 音量
-				fitVideoSize: 'auto',
+				// fitVideoSize: 'auto',
 				videoInit: true, // 视屏初始化使用首帧
-				poster: 'http://192.168.0.107:8080/test.jpeg', // 封面图
+				// poster: 'http://192.168.74.50:8081/test.jpeg', // 封面图
 				autoplay: true,
 				controls: false, // 关闭视频默认控件
-				// controlsList: ['nodownload','nofullscreen','noremoteplayback'],
 				lang: 'en',
 				playsinline: true, // 关闭ios默认全屏行为
 				'x5-video-player-type': 'h5',
@@ -68,6 +66,9 @@ export default {
 	},
 }
 </script>
-<style lang="scss" scoped>
-
+<style lang="scss">
+// 隐藏视频开始按钮
+.xgplayer-start {
+	opacity: 0;
+}
 </style>
