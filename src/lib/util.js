@@ -1,4 +1,5 @@
 export default {
+  // 获取页面参数
   getUrlParams(key) {
     let paramsStr = '';
     const obj = {};
@@ -11,5 +12,15 @@ export default {
       })
     }
     return obj[key];
+  },
+  // 格式化金额
+  getPrice(val) {
+    if (val === null || val === '') {
+        return val;
+    } else if (isNaN(val)) {
+        return null;
+    } else {
+        return +((val / 100).toFixed(2));
+    }
   },
 }
