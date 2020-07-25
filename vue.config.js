@@ -1,6 +1,7 @@
 const path = require('path')
 
 module.exports = {
+	lintOnSave: false,
 	configureWebpack: {
     resolve: {
 			alias: {
@@ -10,13 +11,13 @@ module.exports = {
 		plugins: [
 		]
 	},
-	devServer: {
-    proxy: {
-			'/test/':  {
-        target: 'http://192.168.0.109:8081',
-        ws: true,
-        changeOrigin: true
-      },
-		}
-  }
+	// devServer: {
+  //   proxy: {
+	// 		'/test/':  {
+  //       target: 'http://192.168.0.109:8081',
+  //       ws: true,
+  //       changeOrigin: true
+  //     },
+	// 	}
+  // }
 }
