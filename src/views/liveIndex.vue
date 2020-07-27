@@ -1,8 +1,8 @@
 <template>
-	<div>
+	<div class="container">
 		<div id="live-container"></div>
 		<!-- 直播间信息模块 -->
-		<div class="live-top layout-top" @click="goDownload()">
+		<div class="live-top layout-top" @click="goDownload()" v-if="liveRoomInfo.id">
 			<div class="live-room-info">
 				<img class="room-logo" :src="liveRoomInfo.logo" alt="">
 				<div class="room-name-id">
@@ -21,12 +21,12 @@
 			</div>
 		</div>
 		<!-- 头部社群模块 -->
-		<div class="community-box layout-top" @click="goDownload()">
+		<div class="community-box layout-top" @click="goDownload()" v-if="liveRoomInfo.id">
 			<img class="community-img" src="../assets/community.png" alt="">
 			<div class="community-text">进入他的社群</div>
 			<img class="community-img" src="../assets/arrow-right.png" alt="">
 		</div>
-		<div class="more-live layout-top" @click="goDownload()">
+		<div class="more-live layout-top" @click="goDownload()" v-if="liveRoomInfo.id">
 			<img class="more-live-img" src="../assets/more-live.png" alt="">
 		</div>
 		<!-- 商品模块 -->
@@ -51,7 +51,7 @@
 		</div>
 
 		<!-- 直播间操作模块 -->
-		<div class="live-operator-box layout-top" :style="{ bottom: isIphonex() ? '54px' : '20px' }" @click="goDownload()">
+		<div class="live-operator-box layout-top" :style="{ bottom: isIphonex() ? '54px' : '20px' }" @click="goDownload()" v-if="liveRoomInfo.id">
 			<div class="coment-box">说点什么...</div>
 			<div class="live-operator-btn">
 				<img class="live-operator-btn-icon" src="../assets/daizi.png" alt="">
@@ -131,14 +131,14 @@ export default {
 			const { URL, roomName, roomNick } = liveRoomInfo;
 			this.liveRoomInfo = liveRoomInfo;
 			document.title = roomName ? roomName : `${roomNick}的直播`;
-			// this.initPlayer(URL);
+			this.initPlayer(URL);
 		},
 		// 初始化视频插件
 		initPlayer(url) {
 			const { innerWidth, innerHeight } = window;
 			const player = new Player({
 				id: 'live-container',
-				url: 'http://pili-vod.live.hcjuquan.com/recordings/z1.juquanzhibo.97974873/1595850328_1595850341.m3u8',
+				url,
 				useHls: true,
 				width: innerWidth,
 				height: innerHeight,
@@ -182,6 +182,13 @@ export default {
 }
 </script>
 <style lang="scss">
+.container {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+}
 // 隐藏视频开始按钮
 .xgplayer-start {
 	opacity: 0;
@@ -194,7 +201,7 @@ export default {
 }
 
 .layout-top {
-	position: fixed;
+	position: absolute;
 	z-index: 998;
 	box-sizing: border-box;
 	display: flex;
@@ -380,6 +387,8 @@ export default {
 			width: 100px;
 			height: 100px;
 			margin: 0px 20px;
+			object-fit: cover;
+			border-radius: 14px;
 		}
 
 		.good-name {
