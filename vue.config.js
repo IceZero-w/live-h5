@@ -11,13 +11,21 @@ module.exports = {
 		plugins: [
 		]
 	},
-	// devServer: {
-  //   proxy: {
-	// 		'/test/':  {
-  //       target: 'http://192.168.0.109:8081',
-  //       ws: true,
-  //       changeOrigin: true
-  //     },
-	// 	}
-  // }
+	// 自动格式化，标签dom上的px to vw
+	chainWebpack: (config) => {
+		config.module
+		.rule('vue')
+		.test(/\.vue$/)
+		.use('style-vw-loader')
+			.loader('style-vw-loader')
+	},
+	devServer: {
+    proxy: {
+			'/apicloud/Alive/':  {
+        target: 'http://api4.hcjuquan.com',
+        ws: true,
+        changeOrigin: true
+      },
+		}
+  }
 }

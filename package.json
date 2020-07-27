@@ -38,6 +38,7 @@
     "eslint-plugin-vue": "^6.2.2",
     "postcss-import": "^12.0.1",
     "postcss-url": "^8.0.0",
+    "style-vw-loader": "^1.0.2",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {

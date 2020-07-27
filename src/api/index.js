@@ -16,7 +16,7 @@ function http(method, url, data) {
 			resolve(res.data)
 		}).catch((err) => {
 			Toast({
-				message: err.message || '系统错误',
+				message: err.mess || '系统错误',
 				duration: 1500,
 				className: 'my-toast',
 			});

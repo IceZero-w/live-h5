@@ -19,7 +19,7 @@ export default {
     } else if (isNaN(val)) {
         return null;
     } else {
-        return +((val / 100).toFixed(2));
+        return (+(val)).toFixed(2);
     }
   },
   // 格式化直播人数
@@ -48,4 +48,11 @@ export default {
     console.log(ua, 'dkosksoksoso')
     return ua.indexOf('micromessenger') != -1
   },
+  isIphonex(){
+    const u = navigator.userAgent;
+    if (!!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/) && typeof window !== 'undefined' && window) {
+      return /iphone/gi.test(u) && window.screen.height >= 812;
+    }
+    return false;
+  }
 }

@@ -1,11 +1,7 @@
 import { http } from './index';
 
-const getLiveData = (data) => http('get', '', data);
-const getLiveRoomInfo = (data) => http('get', '', data);
-const getGoodInfo = (data) => http('get', '', data);
+const getLiveData = (data) => http('post', '/apicloud/Alive/get_alive_info', data);
 
 export {
 	getLiveData,
-	getLiveRoomInfo,
-	getGoodInfo
 }

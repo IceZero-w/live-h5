@@ -4,18 +4,20 @@
 		<!-- 直播间信息模块 -->
 		<div class="live-top layout-top" @click="goDownload()">
 			<div class="live-room-info">
-				<img class="room-logo" :src="liveRoomDetail.logo" alt="">
+				<img class="room-logo" :src="liveRoomInfo.logo" alt="">
 				<div class="room-name-id">
-					<span class="room-nick">{{ liveRoomDetail.roomNick }}</span>
-					<span class="room-id">ID:{{ liveRoomDetail.id }}</span>
+					<span class="room-nick">{{ liveRoomInfo.roomNick }}</span>
+					<span class="room-id">ID:{{ liveRoomInfo.id }}</span>
 				</div>
 				<div class="attention-btn">关注</div>
 			</div>
 			<div class="live-room-visit">
-				<template v-if="liveRoomDetail.livePersonList && liveRoomDetail.livePersonList.length && liveRoomDetail.livePersonList.length <= 4">
-					<img v-for="(item, index) in liveRoomDetail.livePersonList" class="room-logo visit-person-img" :key="index" :src="item.userAvatar" alt="">
+				<template v-if="liveRoomInfo.livePersonList && liveRoomInfo.livePersonList.length">
+					<div class="live-room-img-li" v-for="(item, index) in liveRoomInfo.livePersonList" :key="index">
+						<img v-if="index < 4" class="room-logo visit-person-img" :key="index" :src="item.userAvatar" alt="">
+					</div>
 				</template>
-				<div class="room-logo live-num">{{ formatPersonNum(liveRoomDetail.liveNum) }}</div>
+				<div class="room-logo live-num">{{ formatPersonNum(liveRoomInfo.liveNum) }}</div>
 			</div>
 		</div>
 		<!-- 头部社群模块 -->
@@ -28,7 +30,7 @@
 			<img class="more-live-img" src="../assets/more-live.png" alt="">
 		</div>
 		<!-- 商品模块 -->
-		<div class="good-item layout-top" @click="goDownload()">
+		<div class="good-item layout-top" :style="{ bottom: isIphonex() ? '150px' : '106px' }" @click="goDownload()" v-if="liveRoomInfo.goodName">
 			<div class="good-top">
 				<div class="good-top-left">
 					<img class="good-top-icon1" src="../assets/buy-daizi.png" alt="">
@@ -37,19 +39,19 @@
 				<img class="good-top-right" src="../assets/close-circle.png" alt="">	
 			</div>
 			<div class="good-bottom">
-				<img class="good-pic" :src="goodInfo.goodMainPic" alt="">
+				<img class="good-pic" :src="liveRoomInfo.goodMainPic" alt="">
 				<div class="good-name-price">
-					<div class="good-name">{{ goodInfo.goodName }}</div>
+					<div class="good-name">{{ liveRoomInfo.goodName }}</div>
 					<div class="good-price">
 						<span>¥</span>
-						<span class="good-price-num">{{ getPrice(goodInfo.goodPrice) }}</span>
+						<span class="good-price-num">{{ getPrice(liveRoomInfo.goodPrice) }}</span>
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<!-- 直播间操作模块 -->
-		<div class="live-operator-box layout-top" @click="goDownload()">
+		<div class="live-operator-box layout-top" :style="{ bottom: isIphonex() ? '54px' : '20px' }" @click="goDownload()">
 			<div class="coment-box">说点什么...</div>
 			<div class="live-operator-btn">
 				<img class="live-operator-btn-icon" src="../assets/daizi.png" alt="">
@@ -57,7 +59,7 @@
 			</div>
 		</div>
 
-		<div class="app-download-dialog layout-top" v-if="downloadDialog === true">
+		<div class="app-download-dialog layout-top" :style="{ height: isIphonex() ? '204px' : '170px' }" v-if="downloadDialog === true">
 			<div class="app-info">
 				<img class="app-logo" src="../assets/app-logo.png" alt="">
 				<div class="app-download-text">
@@ -76,17 +78,14 @@
 import 'xgplayer';
 import Player from 'xgplayer-hls';
 import { Toast } from 'mint-ui';
-import { getLiveData, getLiveRoomInfo, getGoodInfo } from '@/api/live';
-// import { iconAsset } from '@/assets'
+import { getLiveData } from '@/api/live';
+
 let Timer;
 export default {
 	data() {
 		return {
 			roomId: undefined, // 直播房间号id
-			// 直播房间信息
-			liveRoomDetail: {},
-			// 直播间推荐的商品数据
-			goodInfo: {},
+			liveRoomInfo: {}, // 直播房间信息
 
 			downloadDialog: false, // 控制下载弹窗
 		};
@@ -98,6 +97,11 @@ export default {
 			clearTimeout(Timer);
 			Timer = null;
 		}, 5000)
+		document.body.addEventListener('touchmove' , function(e){
+			console.log(222)
+			window.scrollTop = 0
+            e.preventDefault();
+        });
 	},
 	destroyed() {
 		clearTimeout(Timer);
@@ -115,25 +119,26 @@ export default {
 				return;
 			}
 			this.getLiveDataFn();
-			this.getLiveRoomInfoFn();
-			this.getGoodInfoFn();
 		},
 		// 获取直播数据
 		async getLiveDataFn() {
 			const params = {
+				api_version: 'v1',
 				roomId: this.roomId,
 			};
-			const data = await getLiveData(params);
-			console.log(data, 'koskodks')
-			const { url } = data || {};
-			this.initPlayer(url);
+			const res = await getLiveData(params);
+			const liveRoomInfo = res.data.data || {};
+			const { URL, roomName, roomNick } = liveRoomInfo;
+			this.liveRoomInfo = liveRoomInfo;
+			document.title = roomName ? roomName : `${roomNick}的直播`;
+			// this.initPlayer(URL);
 		},
 		// 初始化视频插件
 		initPlayer(url) {
 			const { innerWidth, innerHeight } = window;
 			const player = new Player({
 				id: 'live-container',
-				url,
+				url: 'http://pili-vod.live.hcjuquan.com/recordings/z1.juquanzhibo.97974873/1595850328_1595850341.m3u8',
 				useHls: true,
 				width: innerWidth,
 				height: innerHeight,
@@ -149,48 +154,6 @@ export default {
 				'x5-video-player-fullscreen': false,
 			});
 			player.emit('resourceReady', [{name: '高清', url: 'url1'}, {name: '超清', url: 'url2'}]);
-		},
-		// 获取直播房间信息
-		async getLiveRoomInfoFn() {
-			const params = {
-				roomId: this.roomId,
-			};
-			const data = await getLiveRoomInfo(params);
-			// const data = {
-			// 	logo: require('../assets/logo.png'),
-			// 	roomName: '沐沐的直播间',
-			// 	id: 66666,
-			// 	roomNick: '沐沐木木木',
-			// 	livePersonList: [
-			// 		{
-			// 			userAvatar: require('../assets/logo.png'),
-			// 		},
-			// 		{
-			// 			userAvatar: require('../assets/logo.png'),
-			// 		},
-			// 		{
-			// 			userAvatar: require('../assets/logo.png'),
-			// 		},
-			// 		{
-			// 			userAvatar: require('../assets/logo.png'),
-			// 		},
-			// 	],
-			// 	liveNum: 900,
-			// };
-			this.liveRoomDetail = data;
-		},
-		// 获取直播间 商品的信息
-		async getGoodInfoFn() {
-			const params = {
-				roomId: this.roomId,
-			};
-			const data = await getGoodInfo(params);
-			// const data = {
-			// 	goodMainPic: require('../assets/app-logo.png'),
-			// 	goodName: 'IWC/万国官方正品飞行员系列 男士手表精钢机械腕表',
-			// 	goodPrice: 100000,
-			// };
-			this.goodInfo = data;
 		},
 
 		// 关闭弹窗
@@ -227,6 +190,7 @@ export default {
 .room-logo {
 	width: 62px;
 	height: 62px;
+	border-radius: 50%;
 }
 
 .layout-top {
@@ -249,9 +213,11 @@ export default {
 		height: 76px;
 		display: flex;
 		align-items: center;
-		justify-content: space-around;
+		justify-content: space-between;
 		background:rgba(0,0,0, .2);
 		border-radius:38px;
+		box-sizing: border-box;
+		padding: 0px 8px;
 
 		.room-name-id {
 			width: 140px;
@@ -262,6 +228,7 @@ export default {
 			display: flex;
 			flex-direction: column;
 			justify-content: space-around;
+			margin-left: 5px;
 
 			.room-nick {
 				font-size: 28px;
@@ -271,6 +238,11 @@ export default {
 				overflow: hidden;
 				white-space: nowrap;
 
+			}
+
+			.room-id {
+				font-size: 22px;
+				line-height: 1;
 			}
 
 		}
@@ -293,8 +265,15 @@ export default {
 
 	.live-room-visit {
 		display: flex;
+		align-items: center;
+
+		.live-room-img-li {
+			display: flex;
+			align-items: center;
+		}
 
 		.visit-person-img {
+			object-fit: cover;
 			margin-right: 10px;
 		}
 
@@ -304,7 +283,7 @@ export default {
 			line-height: 62px;
 			border-radius: 50%;
 			color: #fff;
-			font-size: 12px;
+			font-size: 22px;
 		}
 	}
 }
@@ -503,7 +482,7 @@ export default {
 		}
 
 		.text-waiting {
-			font-size: 12px;
+			font-size: 22px;
 		}
 	}
 
